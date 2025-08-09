@@ -1,4 +1,5 @@
 import proj4 from 'proj4';
+import { Observable } from 'rxjs';
 
 export class CoordinatesHelper {
   private static readonly EPSG3857 = 'EPSG:3857';
@@ -30,10 +31,13 @@ export class CoordinatesHelper {
   }
 
   public static getH3Resolution(zoom: number): number {
-    if (zoom >= 12) return 9;
-    if (zoom >= 9) return 7;
-    if (zoom >= 6) return 5;
-
-    return 2;
+    if (zoom >= 14) return 7;
+    if (zoom >= 12) return 6;
+    if (zoom >= 10) return 5;
+    if (zoom >= 8) return 4;
+    if (zoom >= 6) return 3;
+    if (zoom >= 4) return 2;
+    if (zoom >= 2) return 1;
+    return 0;
   }
 }
