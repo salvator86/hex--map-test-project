@@ -1,10 +1,11 @@
 import { Component, AfterViewInit, ViewChild } from '@angular/core';
 import { GoogleMap } from '@angular/google-maps';
-import { HttpClient } from '@angular/common/http';
 import * as h3 from 'h3-js';
 
 import { CoordinatesHelper } from '../../helpers/coordinates.helper';
 import { GeoJson } from '../../models/geo-json.model';
+import { GeoJsonService } from '../../services/data-json.service';
+import { take } from 'rxjs';
 
 @Component({
   selector: 'app-hex-map',
@@ -24,13 +25,13 @@ export class HexMapComponent implements AfterViewInit {
   public center = { lat: 23.8859, lng: 45.0792 };
   public zoom = 6;
 
-  public constructor(private http: HttpClient) {}
+  public constructor(private geoJsonService: GeoJsonService) {}
 
   public ngAfterViewInit() {
     if (this.mapComponent?.googleMap) {
       this.map = this.mapComponent.googleMap;
 
-      this.http.get<GeoJson>('/assets/data.json').subscribe(data => {
+      this.geoJsonService.getGeoJsonData().pipe(take(1)).subscribe(data => {
         this.geoJsonData = data;
         this.drawHexagons();
       });
