@@ -43,6 +43,9 @@ export class HexMapComponent implements AfterViewInit {
   public drawHexagons() {
     if (!this.map || !this.geoJsonData?.features?.length) return;
 
+    const bounds = this.map.getBounds();
+    if (!bounds) return;
+
     this.polygons.forEach(p => p.setMap(null));
     this.polygons = [];
 
@@ -65,10 +68,16 @@ export class HexMapComponent implements AfterViewInit {
         const hexBoundary = h3.cellToBoundary(h3Index, true) as [number, number][];
         const hexPath = hexBoundary.map(([lat, lng]) => ({ lat, lng }));
 
-        this.addPolygon(hexPath, color);
+        const hexBounds = new google.maps.LatLngBounds();
+        hexPath.forEach(coordinate => hexBounds.extend(coordinate));
+
+        if (bounds.intersects(hexBounds)) {
+          this.addPolygon(hexPath, color);
+        }
       });
     });
   }
+
 
   public addPolygon(path: google.maps.LatLngLiteral[], fillColor: string) {
     const polygon = new google.maps.Polygon({
